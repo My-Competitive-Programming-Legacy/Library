@@ -1,0 +1,15 @@
+*.exe
+cmake-build-debug
+.idea
+A.cpp
+B.cpp
+C.cpp
+D.cpp
+E.cpp
+F.cpp
+G.cpp
+in
+out
+Tester/in.txt
+Tester/out.txt
+Tester/ok.txt
