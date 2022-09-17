@@ -1,111 +1,75 @@
 #include <bits/stdc++.h>
-/*
-Created on  by Hamza Hassan:
-*/
-#define space " "
-typedef long long int ll;
-#define debug(val) "[ " << #val " : " << (val) << " ]" << space
+
 using namespace std;
+const int mxN = 200 * 1000 + 4;
+const int lgN = 21;
+vector<int> g[mxN];
+int up[mxN][21];
+int tin[mxN], tout[mxN];
+int counter = 0;
 
-int n, q;
-ll fen[2 * 100000 + 3];
-void build() {
-    for (int i = 0; i <= n; i++) fen[i] = 0;
+void dfs(int cur, int par = -1) {
+    up[cur][0] = par;
+    tin[cur] = counter++;
+    for (int i = 1; i < lgN; i++) {
+        if (up[cur][i - 1] != -1) {
+            up[cur][i] = up[up[cur][i - 1]][i - 1];
+        } else {
+            up[cur][i] = -1;
+        }
+    }
+    for (auto to: g[cur]) {
+        if (to != par) dfs(to, cur);
+    }
+    tout[cur] = counter++;
 }
 
-ll sum(int r) {
-    ll ans = 0;
-    for (; r > 0; r -= (r & (-r))) ans += fen[r];
-    return ans;
+int is_ancestor(int par, int child) {
+    return tin[par] <= tin[child] && tout[child] <= tout[par];
 }
 
-ll sum(int l, int r) {
-    return sum(r) - sum(l - 1);
-}
-
-void update(int idx, int delta) {
-    for (; idx <= n; idx += (idx & (-idx))) fen[idx] += delta;
-}
-
-void range_update(int l, int r, int delta) {
-    update(l, delta);
-    if (r < n) update(r + 1, -delta);
+int lca(int u, int v) {
+    if (is_ancestor(v, u)) {
+        return v;
+    }
+    for (int i = lgN - 1; i >= 0; i--) {
+        if (up[v][i] != -1 && !is_ancestor(up[v][i], u)) {
+            v = up[v][i];
+        }
+    }
+    return up[v][0];
 }
 
 int main() {
-#ifdef _DEBUG // place in cmake-build-debug folder
-    freopen("in.txt", "r", stdin);
-    freopen("out.txt", "w", stdout);
-#endif
+    int n, q;
     cin >> n >> q;
-    vector<int> ar(n + 1);
-    build();
-    for (int i = 1; i <= n; i++) {
-        cin >> ar[i];
-        range_update(i, i, ar[i]);
+    vector<int> val(n);
+    for (int i = 0; i < n; i++) {
+        cin >> val[i];
     }
+    for (int i = 1; i < n; i++) {
+        int u, v;
+        cin >> u >> v;
+        u -= 1;
+        v -= 1;
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+    dfs(0, -1);
+
     while (q--) {
-        int t;
-        cin >> t;
-        if (t == 1) {
-            int a, b, c;
-            cin >> a >> b >> c;
-            range_update(a, b, c);
-        } else {
-            int a;
-            cin >> a;
-            cout << sum(a) << endl;
+        int u, v;
+        cin >> u >> v;
+        u -= 1;
+        v -= 1;
+        int l = lca(u, v);
+        int ans = max(val[u], val[v]);
+        while (u != l) {
+            ans = max(ans, val[u]);
+            u = up[u][0];
         }
 
     }
 
-
     return 0;
 }
-
-//int n, m, k;
-//vector<vector<char>> a;
-//const bool query = true;
-//bool solve(int i, int j) {
-//    int cnt = 0;
-//    if (i == n && j == 0) {
-//        for (int i = 0; i < n; i++) {
-//            for (int j = 0; j < m; j++) {
-//                if (a[i][j] == '.') {
-//                    return false;
-//                } else {
-//                    if (a[i][j] == 'H')cnt += 1;
-//                }
-//            }
-//        }
-//        if (cnt == k * 2) {
-//            int x = 4;
-//        }
-//        return cnt == k * 2;
-//    }
-//    int nr = i;
-//    int nc = j + 1;
-//    if (j + 1 == m) {
-//        nr += 1;
-//        nc = 0;
-//    }
-//    if (a[i][j] != '.') {
-//        return solve(nr, nc);
-//    }
-//
-//    if (j + 1 < m && a[i][j + 1] == '.') {
-//        a[i][j] = 'H';
-//        a[i][j + 1] = 'H';
-//        if (solve(nr, nc))return true;
-//        a[i][j + 1] = '.';
-//        a[i][j] = '.';
-//    }
-//    if (i + 1 < n && a[i + 1][j] == '.') {
-//        a[i][j] = 'V';
-//        a[i + 1][j] = 'V';
-//        if (solve(nr, nc)) return true;
-//        a[i + 1][j] = '.';
-//        a[i][j] = '.';
-//    }
-//    return false;
-//}

@@ -14,25 +14,24 @@ long long int V = 6;
 #define ll long long int
 
 int main() {
-    int n = rng()%10 + 1 ;
-    int q=  rng()%4 + 1  ;
-
-    cout << n << ' ' << q <<endl;
-    for(int i=0;i<n;i++){
-        cout << rng()%V + 1 << ' ';
+    int n = 100000 + 1;
+    int m = 100000 + 1 + n - 1;
+    cout << n << ' ' << m << endl;
+    set<pair<int, int>> st;
+    for (int i = 1; i < n; i++) {
+        cout << i - 1 << ' ' << i << ' ' << 1 << endl;
+        st.insert({i - 1, i});
+    }
+    for (int i = 0; i < m; i++) {
+        int u = rng() % n + 1;
+        int v = rng() % n + 1;
+//        while (st.count({u, v})) {
+//            int u = rng() % n + 1;
+//            int v = rng() % m + 1;
+//        }
+        st.insert({u,v});
+        cout << u << ' ' << v << ' ' << 1 << endl;
     }
     cout << endl;
-    while(q--){
-        int type = rng()%2+1;
-        if(type == 1 ) {
-            int R = rng()%n + 1 ;
-            int L = rng()%R + 1 ;
-            int delta = rng()%V + 1 ;
-            cout <<1 << ' ' << L << ' ' << R << ' ' << delta << endl;
-        }else {
-            int idx = rng()%n + 1 ;
-            cout << 2 << ' ' << idx <<endl;
-        }
-    }
 
 }
